@@ -46,8 +46,30 @@ class LemonadeStand{
         
         return true;
     }
-
+    
+    //Code to simulate the current day
     simulateDay(weather: string, prices: any){
+        //Weather code and how it affects demand
+        let demand = 0;
+        if(weather == "heatwave") demand = 50;
 
+        else if(weather == "cloudy") demand = 15;
+
+        else if(weather == "cold") demand = 5;
+
+        else demand = 25;
+    
+        //Lemonade Recipe
+        let maxPossible = Math.min;(
+            this.inventory.lemons,
+            this.inventory.sugar,
+            Math.floor(this.inventory.ice / 3),
+            this.inventory.cups
+        );
+
+        
     }
+
+
+    
 }
