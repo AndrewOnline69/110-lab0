@@ -22,4 +22,32 @@ class LemonadeStand{
         this.inventory = new Inventory();
         this.cash = initialCash;
     }
+
+    //Code for buying the supplies needed
+    buySupplies(prices: any, purchases:any){
+        const cost = purchases.lemons * prices.lemons +
+                    purchases.cups * prices.cups +
+                    purchases.sugar * prices.sugar +
+                    purchases.ice * prices.ice;
+        
+        //Fail check if cash is less than cost
+        if(cost > this.cash){
+            console.log("Not Enough Money!! You're Broke!!!!");
+            return false;
+        }
+
+        //Updates the cash and inventory with items bought
+        this.cash -= cost;
+        this.inventory.lemons += purchases.lemons;
+        this.inventory.sugar += purchases.sugar;
+        this.inventory.cups += purchases.cups;
+        this.inventory.ice += purchases.ice;
+        
+        
+        return true;
+    }
+
+    simulateDay(weather: string, prices: any){
+
+    }
 }
