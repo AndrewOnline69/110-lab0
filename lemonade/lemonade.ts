@@ -6,6 +6,8 @@ the player has and how each weather affects the outcome of the Lemonade Stand
 
 */
 
+import * as readline from "readline"
+
 //Initialize the inventory count to 0
 class Inventory{
     lemons: number = 0;
@@ -51,7 +53,7 @@ class LemonadeStand{
     simulateDay(weather: string, prices: any){
         //Weather code and how it affects demand
         let demand = 0;
-        if(weather == "heatwave") demand = 50;
+        if(weather == "hot") demand = 50;
 
         else if(weather == "cloudy") demand = 15;
 
@@ -81,3 +83,30 @@ class LemonadeStand{
     }    
 }
 
+//Game Loop Code
+const r1 = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+});
+
+const stand = new LemonadeStand(20);
+
+function runDay(day: number){
+    const weather = ["hot", "cold", "cloudy", "warm"][Math.floor(Math.random() * 4)]; //Random Weather Code
+
+    const prices = {
+        lemons: 0.6 * Math.random(),
+        cups: 0.14 * Math.random(),
+        sugar: 0.25 * Math.random(),
+        ice: 0.08 * Math.random(),
+    }    
+
+    console.log("Day: ${day}");
+    console.log("Weather: ${weather}");
+    console.log("Prices: ," , prices);
+
+    r1.question("How much Lemons do you want to buy?", (answer) =>{
+     
+        
+    })
+}
