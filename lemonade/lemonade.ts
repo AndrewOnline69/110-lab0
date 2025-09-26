@@ -32,7 +32,7 @@ class LemonadeStand{
         
         //Fail check if cash is less than cost
         if(cost > this.cash){
-            console.log("Not Enough Money!! You're Broke!!!!");
+            console.log("Not Enough Money!! You're Broke!!!");
             return false;
         }
 
@@ -63,13 +63,21 @@ class LemonadeStand{
         let maxPossible = Math.min;(
             this.inventory.lemons,
             this.inventory.sugar,
-            Math.floor(this.inventory.ice / 3),
+            this.inventory.ice / 3,
             this.inventory.cups
         );
 
+        //Determines how much is sold and how much cash is made
+        const sold = Math.min(demand, maxPossible); //Fix Later
+        this.cash += sold * 1.0;
         
-    }
+        //Reduce Inventory
+        this.inventory.lemons -= sold;
+        this.inventory.cups -= sold;
+        this.inventory.sugar -= sold;
+        this.inventory.ice -= sold * 3;
 
-
-    
+        console.log('Weather: ${weather}. You have sold ${sold} lemonade today. Your Lemonade Stand has earned $${cash} dollars');
+    }    
 }
+
