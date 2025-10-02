@@ -43,42 +43,55 @@ class LemonadeStand{
         this.inventory.sugar += purchases.sugar;
         this.inventory.cups += purchases.cups;
         this.inventory.ice += purchases.ice;
-        
+
         
         return true;
     }
-    
+
+    //Displays the Status of Inventory/Cash
+    displayStatus(){
+        console.log("===Current Inventory===");
+        console.log(`Current Cash: $${this.cash.toFixed(2)}`);
+        console.log(`Lemons: ${this.inventory.lemons}`);
+        console.log(`Sugar: ${this.inventory.sugar}`);
+        console.log(`Cups: ${this.inventory.cups}`);
+        console.log(`Ice Cubes: ${this.inventory.ice}`);
+        console.log("======================");
+    }
+
+
     //Code to simulate the current day
     simulateDay(weather: string, prices: any){
         //Weather code and how it affects demand
         let demand = 0;
-        if(weather == "hot") demand = 50;
+        if(weather == "hot") demand = 15;
 
-        else if(weather == "cloudy") demand = 15;
+        else if(weather == "cloudy") demand = 4;
 
-        else if(weather == "cold") demand = 5;
+        else if(weather == "cold") demand = 2;
 
-        else demand = 25;
+        else demand = 10;
     
         //Lemonade Recipe
         let maxPossible = Math.min(
             Number(this.inventory.lemons),
             Number(this.inventory.sugar),
-            Number(Math.floor(this.inventory.ice / 3)),
+            Number(this.inventory.ice),
             Number(this.inventory.cups)
         );
 
         //Determines how much is sold and how much cash is made
-        const sold = Math.min(demand, maxPossible); //Fix Later
-        this.cash += sold * 1.0;
+        const sold = Math.min(demand, maxPossible);
+        this.cash += sold * 1.25;
+        this.cash = Number(this.cash.toFixed(2));//Rounds Cash to 2 Decimals
         
         //Reduce Inventory
         this.inventory.lemons -= sold;
         this.inventory.cups -= sold;
         this.inventory.sugar -= sold;
-        this.inventory.ice -= sold * 3;
+        this.inventory.ice -= sold;
 
-        console.log(`Weather: ${weather}. You have sold ${sold} lemonade today. Your Lemonade Stand has earned $${this.cash} dollars`);
+        console.log(`You have sold ${sold} lemonade today. Your Lemonade Stand has $${this.cash} dollars`);
     }    
 }
 
@@ -107,14 +120,14 @@ async function runDay(day: number){
     
     //Price Code
     const prices = {
-        lemons: +(0.6 + Math.random()).toFixed(2),
-        cups: +(0.14 + Math.random()).toFixed(2),
-        sugar: +(0.25 + Math.random()).toFixed(2),
-        ice: +(0.08 + Math.random()).toFixed(2),
+        lemons: +(0.25 + Math.random()).toFixed(2),
+        sugar: +(0.20 + Math.random()).toFixed(2),
+        cups: +(0.05 + Math.random()).toFixed(2),
+        ice: +(0.03 + Math.random()).toFixed(2),
     }    
-
+    stand.displayStatus();
     console.log("Today's Prices: " , prices);
-    
+
     //Question Purchases for the Lemonade Stand
     async function getPurchases(){
         const lemons = await askQuestion("How many Lemons to buy?");
@@ -123,7 +136,7 @@ async function runDay(day: number){
         const ice = await askQuestion("How many Ice to Buy?");
 
         return{
-            lemons: Number(lemons) ||0,
+            lemons: Number(lemons) || 0,
             sugar: Number(sugar) || 0,
             cups: Number(cups) || 0,
             ice: Number(ice) || 0,
@@ -135,8 +148,9 @@ async function runDay(day: number){
     console.log("Purchases: ", purchases);
 
     stand.buySupplies(prices, purchases);
-    stand.simulateDay(weather, prices);
     
+    stand.simulateDay(weather, prices);
+
     //Day Counter Code
     if(day < 5){
         await runDay(day + 1);
