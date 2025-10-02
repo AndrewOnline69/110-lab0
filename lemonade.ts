@@ -6,8 +6,7 @@ the player has and how each weather affects the outcome of the Lemonade Stand
 
 */
 
-import { cpus } from "os";
-import * as readline from "readline"
+import * as readline from "node:readline";
 
 //Initialize the inventory count to 0
 class Inventory{
