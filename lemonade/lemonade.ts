@@ -63,10 +63,10 @@ class LemonadeStand{
         else demand = 25;
     
         //Lemonade Recipe
-        let maxPossible = Math.min;(
+        let maxPossible = Math.min(
             this.inventory.lemons,
             this.inventory.sugar,
-            this.inventory.ice / 3,
+            Math.floor(this.inventory.ice / 3),
             this.inventory.cups
         );
 
@@ -86,48 +86,74 @@ class LemonadeStand{
 
 //Game Loop Code
 const r1 = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
+  input: process.stdin,
+  output: process.stdout,
 });
+
+//Question Helper Function
+function askQuestion(question: string): Promise<string> {
+  return new Promise((resolve) => {
+    r1.question(question, (answer) => {
+      resolve(answer);
+    });
+  });
+}
 
 const stand = new LemonadeStand(20);
 
-function runDay(day: number){
+async function runDay(day: number){
+    //Weather Code
     const weather = ["hot", "cold", "cloudy", "warm"][Math.floor(Math.random() * 4)]; //Random Weather Code
-
+    console.log("-----Day: ${day}-----");
+    console.log("Today's Weather: ${weather}");
+    
+    //Price Code
     const prices = {
-        lemons: 0.6 * Math.random(),
-        cups: 0.14 * Math.random(),
-        sugar: 0.25 * Math.random(),
-        ice: 0.08 * Math.random(),
+        lemons: +(0.6 + Math.random()).toFixed(2),
+        cups: +(0.14 + Math.random()).toFixed(2),
+        sugar: +(0.25 * Math.random()).toFixed(2),
+        ice: +(0.08 * Math.random()).toFixed(2),
     }    
 
-    console.log("Day: ${day}");
-    console.log("Weather: ${weather}");
-    console.log("Prices: ," , prices);
-
+    console.log("Today's Prices: ," , prices);
+    
     //Question Purchases for the Lemonade Stand
-    r1.question("How much Lemons, Sugar, Ice, and Cups do you want to buy? Enter Each Value:", (answer) =>{
-        const parts = answer.split(",").map((n) => parseInt(n));
-        const purchases = {
-            lemons: parts[0] || 0,
-            sugar: parts[1] || 0,
-            ice: parts[2] || 0,
-            cups: parts[3] || 0,
-        };
-     
-        stand.buySupplies(prices, purchases);
-        stand.simulateDay(weather, prices);
-        
-        //Counts amount of days
-        if(day < 5) runDay(day + 1);
-        else if(day = 100){
-            console.log("Congrats Your Business has Thrived!!!");
-            console.log("Final Cash: ", stand.cash);
-        }
-        else{
-            console.log("Game Over!!! Business has Failed!!!");
-            console.log("Final Cash: ", stand.cash);
-        } 
-    })
+    async function getPurchases(){
+        const lemons = await askQuestion("How many Lemons to buy?");
+        const sugar = await askQuestion("How many Sugar to buy?");
+        const cups = await askQuestion("How many Cups to buy?");
+        const ice = await askQuestion("How many Ice to Buy?");
+
+        return{
+            lemons: Number(lemons) ||0,
+            sugar: Number(sugar) || 0,
+            cups: Number(cups) || 0,
+            ice: Number(ice) || 0,
+        };    
+    }
+
+    //Purchases
+    const purchases = await getPurchases();
+    console.log("Purchases: ", purchases);
+
+    stand.buySupplies(prices, purchases);
+    stand.simulateDay(weather, prices);
+    
+    //Day Counter Code
+    if(day < 100){
+        await runDay(day + 1);
+    }
+
+    else if(day == 100){
+        console.log("Congrats!!! Your Business has Thrived!!!");
+        console.log("End Cash: ", stand.cash);
+        r1.close();
+    }
+
+    else{
+        console.log("Game Over!!! Your Business has Failed!!!");
+        console.log("End Cash: ", stand.cash);
+        r1.close();
+    }
+
 }
