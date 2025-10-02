@@ -6,6 +6,7 @@ the player has and how each weather affects the outcome of the Lemonade Stand
 
 */
 
+import { cpus } from "os";
 import * as readline from "readline"
 
 //Initialize the inventory count to 0
@@ -105,8 +106,28 @@ function runDay(day: number){
     console.log("Weather: ${weather}");
     console.log("Prices: ," , prices);
 
-    r1.question("How much Lemons do you want to buy?", (answer) =>{
+    //Question Purchases for the Lemonade Stand
+    r1.question("How much Lemons, Sugar, Ice, and Cups do you want to buy? Enter Each Value:", (answer) =>{
+        const parts = answer.split(",").map((n) => parseInt(n));
+        const purchases = {
+            lemons: parts[0] || 0,
+            sugar: parts[1] || 0,
+            ice: parts[2] || 0,
+            cups: parts[3] || 0,
+        };
      
+        stand.buySupplies(prices, purchases);
+        stand.simulateDay(weather, prices);
         
+        //Counts amount of days
+        if(day < 5) runDay(day + 1);
+        else if(day = 100){
+            console.log("Congrats Your Business has Thrived!!!");
+            console.log("Final Cash: ", stand.cash);
+        }
+        else{
+            console.log("Game Over!!! Business has Failed!!!");
+            console.log("Final Cash: ", stand.cash);
+        } 
     })
 }
