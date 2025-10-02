@@ -5,9 +5,7 @@ the runtime of the program. The game also will keep track of the inventory
 the player has and how each weather affects the outcome of the Lemonade Stand
 
 */
-
-const readline = require('readline');
-const { createInterface } = require('readline');
+const { createInterface } = require("readline");
 
 //Initialize the inventory count to 0
 class Inventory{
@@ -64,10 +62,10 @@ class LemonadeStand{
     
         //Lemonade Recipe
         let maxPossible = Math.min(
-            this.inventory.lemons,
-            this.inventory.sugar,
-            Math.floor(this.inventory.ice / 3),
-            this.inventory.cups
+            Number(this.inventory.lemons),
+            Number(this.inventory.sugar),
+            Number(Math.floor(this.inventory.ice / 3)),
+            Number(this.inventory.cups)
         );
 
         //Determines how much is sold and how much cash is made
@@ -80,7 +78,7 @@ class LemonadeStand{
         this.inventory.sugar -= sold;
         this.inventory.ice -= sold * 3;
 
-        console.log('Weather: ${weather}. You have sold ${sold} lemonade today. Your Lemonade Stand has earned $${cash} dollars');
+        console.log(`Weather: ${weather}. You have sold ${sold} lemonade today. Your Lemonade Stand has earned $${this.cash} dollars`);
     }    
 }
 
@@ -91,7 +89,7 @@ const r1 = createInterface({
 });
 
 //Question Helper Function
-function askQuestion(question: string): Promise<string> {
+async function askQuestion(question: string): Promise<string> {
   return new Promise((resolve) => {
     r1.question(question, (answer) => {
       resolve(answer);
@@ -104,18 +102,18 @@ const stand = new LemonadeStand(20);
 async function runDay(day: number){
     //Weather Code
     const weather = ["hot", "cold", "cloudy", "warm"][Math.floor(Math.random() * 4)]; //Random Weather Code
-    console.log("-----Day: ${day}-----");
-    console.log("Today's Weather: ${weather}");
+    console.log(`-----Day: ${day}-----`);
+    console.log(`Today's Weather: ${weather}`);
     
     //Price Code
     const prices = {
         lemons: +(0.6 + Math.random()).toFixed(2),
         cups: +(0.14 + Math.random()).toFixed(2),
-        sugar: +(0.25 * Math.random()).toFixed(2),
-        ice: +(0.08 * Math.random()).toFixed(2),
+        sugar: +(0.25 + Math.random()).toFixed(2),
+        ice: +(0.08 + Math.random()).toFixed(2),
     }    
 
-    console.log("Today's Prices: ," , prices);
+    console.log("Today's Prices: " , prices);
     
     //Question Purchases for the Lemonade Stand
     async function getPurchases(){
@@ -140,20 +138,19 @@ async function runDay(day: number){
     stand.simulateDay(weather, prices);
     
     //Day Counter Code
-    if(day < 100){
+    if(day < 5){
         await runDay(day + 1);
     }
 
-    else if(day == 100){
-        console.log("Congrats!!! Your Business has Thrived!!!");
-        console.log("End Cash: ", stand.cash);
-        r1.close();
-    }
-
     else{
-        console.log("Game Over!!! Your Business has Failed!!!");
+        console.log("Game Over!!!");
         console.log("End Cash: ", stand.cash);
         r1.close();
     }
-
 }
+    
+//Run Game
+(async() => {
+    console.log("Game is Starting...")
+    await runDay(1);
+})();
